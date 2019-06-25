@@ -29,23 +29,35 @@ class Player:
 
 
 #has_ticket = False
-
-
+train_present = False
 def start_platform():
-    print('You are at a train station platform.')
-    print('The train has just arrived.')
-    print('north: Ticket booth')
-    print('west: Enter the train')
-    print('south: Go sit on a bench')
-    choice = input('? ')
-    if choice == 'north':
-        ticket_booth()
-    elif choice == 'south':
-        bench()
-    elif choice == 'west':
-        train_car3()
-    else:
-        start_platform()
+	print('You are at a train station platform.')
+	if train_present:
+		print('The train has just arrived.')
+		print('north: Ticket booth')
+		print('west: Enter the train')
+		print('south: Go sit on a bench')
+		print('wait: Wait awhile')
+		choice = input('? ')
+		if choice == 'north':
+			ticket_booth()
+		elif choice == 'south':
+			bench()
+		elif choice == 'west':
+			train_car3()
+		else:
+			start_platform()
+	else:
+		print('north: Ticket booth')
+		print('south: Go sit on a bench')
+		print('wait: Let time go by and reflect on your life.')
+		choice = input('? ')
+		if choice == 'north':
+			ticket_booth()
+		elif choice == 'south':
+			bench()
+		else:
+			start_platform()
 
 start_platform()
 	
