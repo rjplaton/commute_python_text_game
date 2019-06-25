@@ -6,7 +6,7 @@ rooms = {}
 
 
 #inventory information in a dictionary
-player_inventory = {}
+player_inventory = ['--- Sword','--- Pen']
 
 
 #inventory items can be picked up
@@ -20,16 +20,33 @@ class Player:
     def __init__(self):
         self.player_name = player_name
         self.has_ticket = False
+        self.has_sword = False
+        self.has_pen = False
+        self.has_zombiearm = False
+
+    def check_inventory(self):
+    	for items in player_inventory:
+    		print(items)
+
 
     #consider a player can move?
     #def move_west(self):
+
+#Pseudocode if we want to create a location class
+class Location:
+    def __init__(self):
+        self.train_present = False
+        self.description = description
+        self.choices = choices
+
+
 
 #player_name = input('What is your name?')
 #print(player_name)
 
 
 #has_ticket = False
-
+import time
 game_time = 0
 train_present = False
 
@@ -55,7 +72,15 @@ def start_platform():
 		bench()
 	elif choice == 'west' and train_present:
 		train_car3()
+	elif choice == 'bag':
+		Player.check_inventory(player_inventory)
+		time.sleep(1)
+		#checking your bag shouldn't progress game_time
+		game_time -= 1
+		start_platform()
 	else:
+		print('--- You decide to wait. If you wanted to move, try typing one of the direction options. ---')
+		time.sleep(1)
 		start_platform()
 
 def check_train_present():
