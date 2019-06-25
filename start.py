@@ -30,7 +30,11 @@ class Player:
 
 #has_ticket = False
 train_present = False
+game_time = 0
 def start_platform():
+	global game_time
+	game_time += 1
+	print('Turn',game_time)
 	print('You are at a train station platform.')
 	if train_present:
 		print('The train has just arrived.')
@@ -58,6 +62,7 @@ def start_platform():
 			bench()
 		else:
 			start_platform()
+
 
 start_platform()
 	
