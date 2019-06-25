@@ -1,0 +1,8 @@
+1. Up
+2. up
+3. down
+4. down
+5. left
+6. right
+7. start
+8. select
