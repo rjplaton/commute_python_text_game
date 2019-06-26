@@ -2,11 +2,31 @@
 
 ### NOTES ### 
 #room information in a dictionary
-rooms = {}
+locations = [
+{
+'name' : 'Starting Platform',
+'description' : 'You are at the main train station platform.',
+'options' : 
+"""--Option-- north: Ticket booth
+--Option-- south: Go sit on a bench
+--Option-- wait: Wait awhile
+"""
+},
+{
+'name' : 'Ticket Booth',
+'description' : "You walk up to the ticket booth. Lucky you, there isn't a line.",
+'options' : 
+"""--Option-- buy: Buy a ticket
+--Option-- south: Starting area towards the bench
+--Option-- wait: Wait awhile
+"""
+},
+]
 
+#print(locations['starting_platform'])
 
 #inventory information in a dictionary
-player_inventory = ['--- Sword','--- Pen']
+player_inventory = ['Sword','Pen']
 
 
 #inventory items can be picked up
@@ -17,33 +37,89 @@ player_inventory = ['--- Sword','--- Pen']
 #OR
 #use class to define a player that has properties
 class Player:
-    def __init__(self):
+    def __init__(self, player_name):
         self.player_name = player_name
         self.has_ticket = False
         self.has_sword = False
         self.has_pen = False
         self.has_zombiearm = False
 
+    def intro(self):
+        print('--- Intro ---')
+        print('Welcome to your daily commute.')
+        print('To win the game, get to work safely.')
+        player_name = input('What is your name?')
+        player1 = Player(player_name)
+        print('Hi', player1.player_name)
+
     def check_inventory(self):
+    	print('--- | Bag Inventory |---')
+    	i = 1
     	for items in player_inventory:
-    		print(items)
+    		print('---',i,items)
+    		i += 1
+    
+    def buy_ticket(self):
+    	self.has_ticket = True
+    	player_inventory.append('Ticket')
+    
+    def pickup_pen(self):
+    	self.has_pen = True
+    	player_inventory.append('Pen')
+
+    def pickup_sword(self):
+    	self.has_sword = True
+    	player_inventory.append('Sword')
+    
+    def pickup_sword(self):
+    	self.has_sword = True
+    	player_inventory.append('Zombie Arm')
+    
+    def waiting(self):
+        print('--- You decide to wait. If you wanted to move, try typing one of the direction options. ---')
+        time.sleep(1)
+        if game_time > 3:
+            print("Unfortunately, you didn't make it to work on time")
+            Player.game_over(self)
+    def game_over(self):
+        print("G A M E  O V E R!")
+        exit()
 
 
-    #consider a player can move?
-    #def move_west(self):
+#testing if these things work
+player1 = Player('me')
+player1.intro()
+print(player1.has_ticket)
+print(player_inventory)
+player1.buy_ticket()
+print(player1.has_ticket)
+print(player_inventory)
+
 
 #Pseudocode if we want to create a location class
 class Location:
-    def __init__(self):
-        self.train_present = False
-        self.description = description
-        self.choices = choices
+    def check_train_present(self):
+        global train_present
+        if game_time % 4 == 0:
+            train_present = True
+            print('Chooo! Choooo! The train has just arrived.')
+            print('--Option-- west: Enter the train')
+        else:
+            train_present = False
 
 
+    #def train_is_present(self):
+        #global train_present
+        #if train_present:
+         #   print('Chooo! Choooo! The train has just arrived.')
+          #  print('--Option-- west: Enter the train')
+    #def description(self):
+    	#print(locations[self])
+
+#Location.description('starting_platform')
 
 #player_name = input('What is your name?')
 #print(player_name)
-
 
 #has_ticket = False
 import time
@@ -55,16 +131,9 @@ def start_platform():
 	global train_present
 	game_time += 1
 	print('Turn',game_time)
-	check_train_present()
-	print('You are at a train station platform.')
-	print('north: Ticket booth')
-	print('south: Go sit on a bench')
-	print('wait: Wait awhile')
-
-	if train_present:
-		print('The train has just arrived.')
-		print('west: Enter the train')
-
+	print(locations[0]['description'])
+	Location.check_train_present(start_platform)
+	print(locations[0]['options'])
 	choice = input('? ')
 	if choice == 'north':
 		ticket_booth()
@@ -79,16 +148,10 @@ def start_platform():
 		game_time -= 1
 		start_platform()
 	else:
-		print('--- You decide to wait. If you wanted to move, try typing one of the direction options. ---')
-		time.sleep(1)
+		Player.waiting(player1)
 		start_platform()
 
-def check_train_present():
-	global train_present
-	if game_time % 4 == 0:
-		train_present = True
-	else:
-		train_present = False
+
 
 
 start_platform()
