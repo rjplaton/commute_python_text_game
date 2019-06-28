@@ -40,7 +40,7 @@ locations = [
 },
 {
 'name' : 'Train Car 1',
-'description' : """You enter train car 1 and you see a sword.
+'description' : """You're in train car 1 and you see a sword.
 It beckons you to pick it up.
 You are the chosen one""",
 'options' : 
@@ -52,7 +52,7 @@ You are the chosen one""",
 },
 {
 'name' : 'Train Car 2',
-'description' : "You enter train car 2 and it stinks.",
+'description' : "You're in train car 2 and it stinks.",
 'options' : 
 """--Option-- north: Move to the next train up
 --Option-- south: Head back to next train down
@@ -62,7 +62,7 @@ You are the chosen one""",
 },
 {
 'name' : 'Train Car 3',
-'description' : "You try to enter train car 3 and squeeze in. It's full so try to move to another car because this is uncomfortable!",
+'description' : "You're in train car 3. It's full so try to move to another car because this is uncomfortable!",
 'options' : 
 """--Option-- north: Move to the next train up
 --Option-- south: Head back to next train down
@@ -72,7 +72,7 @@ You are the chosen one""",
 },
 {
 'name' : 'Train Car 4',
-'description' : "You enter train car 4 and hear screaming from the next car southward. You are very curious!",
+'description' : "You're in train car 4 and hear screaming from the next car southward. You are very curious!",
 'options' : 
 """--Option-- north: Move to the next train up
 --Option-- south: Investigate the car southward
@@ -82,7 +82,7 @@ You are the chosen one""",
 },
 {
 'name' : 'Train Car 5',
-'description' : """You enter train car 5 and immediately see carnage.
+'description' : """You're in train car 5 and see carnage.
 In the middle of the car, the thing is staring at you""",
 'options' : 
 """--Option-- fight: Fight the monster
@@ -147,9 +147,9 @@ class Player:
 
 #establishing a "time limit" to the game   
 def time_limit():
-    if game_time == 20:
+    if game_time == 15:
         print("Unfortunately, you didn't make it to work on time")
-        Player.game_over(player_name)
+        game_over()
 
 
 def check_train_present():
@@ -158,6 +158,16 @@ def check_train_present():
         train_present = True
         print('Chooo! Choooo! The train has just arrived.')
         print('--New Option-- west: Enter the train')
+    else:
+        train_present = False
+
+def check_platform_present():
+    global train_present
+    if game_time % 4 == 0:
+        train_present = True
+        print('The train slows down and you hear an announcement')
+        print('You can choose to get off now or get off at a later stop.')
+        print('--New Option-- west: Exit the train')
     else:
         train_present = False
 
@@ -194,13 +204,13 @@ def buy_ticket():
 
 def pickup_sword():
     if 'Sword' in player_inventory:
-    	print('You already have the sword and it is awesome.')
-	train_car1()
+        print('You already have the sword and it is awesome.')
+        train_car1()
     else:
-	    player_inventory.append('Sword')
-	    print('You picked up the sword and feel powerful.')
-	    time.sleep(1)
-	    train_car1()
+        player_inventory.append('Sword')
+        print('You picked up the sword and feel powerful.')
+        time.sleep(1)
+        train_car1()
 
 #since time progressing, we need a function for "waiting"    
 def waiting():
@@ -211,6 +221,8 @@ def waiting():
     current_location()
 
 def game_over():
+    print("Something feels missing. . .")
+    time.sleep(1)
     print("G A M E  O V E R!")
     exit()
 
@@ -270,6 +282,9 @@ def location_starter():
     #check if the train is there and allow player to move west
     if location_number <= 2:
         check_train_present()
+        location_choice()
+    elif location_number >= 3 and location_number <= 7:
+        check_platform_present()
         location_choice()
     else:
         location_choice()
@@ -424,6 +439,7 @@ choices = [
 'name' : train_car1,
 'sword' : pickup_sword,
 'south' : train_car2,
+'west' : lose_platform,
 'wait' : waiting,
 'bag' : check_bag,
 'where' : debug,
@@ -433,6 +449,7 @@ choices = [
 'name' : train_car2,
 'north' : train_car1,
 'south' : train_car3,
+'west' : lose_platform,
 'wait' : waiting,
 'bag' : check_bag,
 'where' : debug,
@@ -442,6 +459,7 @@ choices = [
 'name' : train_car3,
 'north' : train_car2,
 'south' : train_car4,
+'west' : lose_platform,
 'wait' : waiting,
 'bag' : check_bag,
 'where' : debug,
@@ -451,6 +469,7 @@ choices = [
 'name' : train_car4,
 'north' : train_car3,
 'south' : train_car5,
+'west' : lose_platform,
 'wait' : waiting,
 'bag' : check_bag,
 },
@@ -459,6 +478,7 @@ choices = [
 'name' : train_car5,
 'fight' : fight,
 'north' : train_car4,
+'west' : lose_platform,
 'wait' : waiting,
 'bag' : check_bag,
 'where' : debug,
