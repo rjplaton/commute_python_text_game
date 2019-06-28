@@ -167,16 +167,19 @@ def train_check_and_move():
     if train_present == True:
         train_car3()
     else:
+        current_location = choices[location_number]['name']
         current_location()
 
 
 
 def check_bag():
     global location_number
-    global current_location
     Player.check_inventory(player_inventory)
+    print(location_number)
+    print(location_number)
+    current_location = choices[location_number]['name']
     current_location()
-    
+
 def buy_ticket():
     if 'Ticket' in player_inventory:
         print('You already have a ticket!')
@@ -200,8 +203,10 @@ def pickup_sword():
 
 #since time progressing, we need a function for "waiting"    
 def waiting():
+    global location_number
     print('--- You decide to wait. If you wanted to move, try typing one of the direction options. ---')
     time.sleep(1)
+    current_location = choices[location_number]['name']
     current_location()
 
 def game_over():
@@ -243,7 +248,10 @@ def location_choice():
         choice_function = choices[location_number][choice]
         choice_function()
     else:
-        print('''Choose one of the options below:        ''')
+        print('''------------- Choose one of the options below:        ''')
+        time.sleep(1)
+        game_time -= 1
+        current_location = choices[location_number]['name']
         current_location()
 
 def location_starter():
@@ -374,6 +382,7 @@ def debug():
     global location_number
     global current_location
     print(current_location)
+    current_location = choices[location_number]['name']
     current_location()
 
 
@@ -473,9 +482,6 @@ choices = [
 ]
 
 
-
-current_location = choices[location_number]['name']
-
 def main():
     #returns the name of the player
     player_name = intro()
@@ -485,8 +491,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
