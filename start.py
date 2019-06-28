@@ -195,6 +195,7 @@ def buy_ticket():
 def pickup_sword():
     if 'Sword' in player_inventory:
     	print('You already have the sword and it is awesome.')
+	train_car1()
     else:
 	    player_inventory.append('Sword')
 	    print('You picked up the sword and feel powerful.')
