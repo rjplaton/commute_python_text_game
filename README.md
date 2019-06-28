@@ -13,4 +13,4 @@ In the Terminal input, type the option you want to take.
 This includes directions your player can take like "north","west","south" and more.
 
 ##### Goal
-To win the game, get to work safely and feel fulfilled.
+To win the game, try to get to work safely and feel fulfilled. Or is it the other way around? 😛
