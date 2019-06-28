@@ -1,8 +1,7 @@
-1. Up
-2. up
-3. down
-4. down
-5. left
-6. right
-7. start
-8. select
+1. Buy a ticket at the ticket booth
+2. Enter the train
+3. Head north to train car 1
+4. Pick up the sword
+5. Head south to train car 5
+6. Exit the train west
+7. Choose to enjoy life

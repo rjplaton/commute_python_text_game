@@ -1,7 +1,10 @@
 #improvement notes
 #consider using a module for replacing what I have as global variables
 #e.g. import config that include game_time = 0 that can be called on as config.gametime
-
+import time
+game_time = 0
+train_present = False
+location_number = 0
 
 #location information
 locations = [
@@ -87,7 +90,27 @@ In the middle of the car, the thing is staring at you""",
 --Option-- wait: Wait awhile standing
 --Option-- bag: Check your bag inventory
 """,
-
+},
+{
+'name' : 'Lose Platform',
+'description' : """You safely get off the train.
+You have a sense of emptiness.""",
+'options' : 
+"""--Option-- work: Get to work
+--Option-- wait: Wait awhile standing
+--Option-- bag: Check your bag inventory
+""",
+},
+{
+'name' : 'Win Platform',
+'description' : """You safely get off the train as a hero.
+You realize you don't need to go to work""",
+'options' : 
+"""--Option-- work: Go to work anyway
+--Option-- enjoy: Choose to enjoy life today by not going to work
+--Option-- wait: Wait awhile standing
+--Option-- bag: Check your bag inventory
+""",
 },
 ]
 
@@ -99,8 +122,6 @@ player_inventory = []
 class Player:
     def __init__(self,player_name):
         self.player_name = player_name
-        self.has_ticket = False
-        self.has_sword = False
         self.has_seen_monster = False
 
 
@@ -119,46 +140,10 @@ class Player:
             i += 1
         time.sleep(1)
         #checking your bag shouldn't progress game_time
-        game_time -= 1
-
-#player can pick up a few different items    
-    def buy_ticket(self):
-        self.has_ticket = True
-        player_inventory.append('Ticket')
-        print('Great! You now have a ticket. You can verify that if you type "bag"')
-        time.sleep(1)
-    
-    def pickup_sword(self):
-        self.has_sword = True
-        player_inventory.append('Sword')
-        print('You picked up and sword and feel powerful.')
-        time.sleep(1)
+        game_time -= 1 
 
 
-#since time progressing, we need a function for "waiting"    
-    def waiting(self):
-        print('--- You decide to wait. If you wanted to move, try typing one of the direction options. ---')
-        time.sleep(1)
 
-    def game_over(self):
-        print("G A M E  O V E R!")
-        exit()
-
-
-class Location:
-    def check_train_present(self):
-        global train_present
-        if game_time % 4 == 0:
-            train_present = True
-            print('Chooo! Choooo! The train has just arrived.')
-            print('--Option-- west: Enter the train')
-        else:
-            train_present = False
-
-import time
-game_time = 0
-train_present = False
-location_number = 0
 
 #establishing a "time limit" to the game   
 def time_limit():
@@ -166,41 +151,15 @@ def time_limit():
         print("Unfortunately, you didn't make it to work on time")
         Player.game_over(player_name)
 
-def start_platform():
-    global player_name
-    global game_time
+
+def check_train_present():
     global train_present
-    global location_number
-    #every time you change location, the current_location is set to the appropriate number
-    location_number = 0
-    game_time += 1
-    time_limit()
-    print('Turn',game_time)
-    print(locations[0]['description'])
-    Location.check_train_present(start_platform)
-    print(locations[0]['options'])
-    choice = input('What do you want to do?  ')
-
-#testing how to make the choice section dryer
-    # if choice in choices[0]:
-    #     print(choices[0][choice])
-    # else:
-    #     print('test')
-
-#choice section
-    if choice == 'north':
-        ticket_booth()
-    elif choice == 'south':
-        bench()
-    elif choice == 'west' and train_present:
-        train_car3()
-    elif choice == 'bag':
-        Player.check_inventory(player_inventory)
-        start_platform()
+    if game_time % 4 == 0:
+        train_present = True
+        print('Chooo! Choooo! The train has just arrived.')
+        print('--New Option-- west: Enter the train')
     else:
-        player_name.waiting()
-        start_platform()
-
+        train_present = False
 
 # have a function that checks if train is there and if present, allow you to do it
 def train_check_and_move():
@@ -210,158 +169,215 @@ def train_check_and_move():
     else:
         current_location()
 
-def check_bag():
-	Player.check_inventory(player_inventory)
-	current_location()
-def buy_ticket():
-	Player.buy_ticket(player_name)
-	ticket_booth()
-def pickup_sword():
-	Player.pickup_sword(player_name)
-	train_car1()
 
-def ticket_booth():
+
+def check_bag():
+    global location_number
+    global current_location
+    Player.check_inventory(player_inventory)
+    current_location()
+    
+def buy_ticket():
+    if 'Ticket' in player_inventory:
+        print('You already have a ticket!')
+        time.sleep(1)
+        ticket_booth()
+    else:
+        player_inventory.append('Ticket')
+        Player.has_ticket = True
+        print('Great! You now have a ticket. You can verify that if you type "bag"')
+        time.sleep(1)
+        ticket_booth()
+
+def pickup_sword():
+    if 'Sword' in player_inventory:
+    	print('You already have the sword and it is awesome.')
+    else:
+	    player_inventory.append('Sword')
+	    print('You picked up the sword and feel powerful.')
+	    time.sleep(1)
+	    train_car1()
+
+#since time progressing, we need a function for "waiting"    
+def waiting():
+    print('--- You decide to wait. If you wanted to move, try typing one of the direction options. ---')
+    time.sleep(1)
+    current_location()
+
+def game_over():
+    print("G A M E  O V E R!")
+    exit()
+
+def fight():
+    if "Sword" in player_inventory:
+        print('You slice the monster in half and become a hero.')
+        time.sleep(1)
+        print('What a great story to tell coworkers.')
+        time.sleep(1)
+        print('The train arrives at the station and reality sets in.')
+        win_platform()
+    else: 
+        print('You try to punch the monster...')
+        print('The monster is unaffected and claws you to death.')
+        game_over()
+
+def win():
+    print('You are awesome.')
+    print("""
+          _   _   _     _   _   _  
+ / \ / \ / \   / \ / \ / \ 
+( Y | o | u ) ( W | I | N )
+ \_/ \_/ \_/   \_/ \_/ \_/ 
+""")
+
+#LOCATION FUNCTIONS
+
+def location_choice():
+    global player_name
     global game_time
     global train_present
     global location_number
-    print(location_number)
-    location_number = 1
-    print(location_number)
+    global current_location
+    choice = input('''What do you want to do?        ''')
+    if choice in choices[location_number]:
+        choice_function = choices[location_number][choice]
+        choice_function()
+    else:
+        print('''Choose one of the options below:        ''')
+        current_location()
+
+def location_starter():
+    global player_name
+    global game_time
+    global train_present
+    global location_number
+    global current_location
+    #game time progressing when you enter a new area
     game_time += 1
     time_limit()
     print('Turn',game_time)
-    print(locations[1]['description'])
-    Location.check_train_present(ticket_booth)
-    #print the options
-    print(locations[1]['options'])
-    choice = input('What do you want to do?  ')
-    if choice == 'buy':
-        if "Ticket" in player_inventory:
-            print('You already have a ticket.')
-            time.sleep(1)
-            game_time -= 1
-            ticket_booth()
-        else: 
-            Player.buy_ticket(player_name)
-            ticket_booth()
-    elif choice == 'south':
-        start_platform()
-    elif choice == 'west' and train_present:
-        train_car3()
-    elif choice == 'bag':
-        Player.check_inventory(player_inventory)
-        time.sleep(1)
-        #checking your bag shouldn't progress game_time
-        game_time -= 1
-        ticket_booth()
+    print(locations[location_number]['description'])
+    print(locations[location_number]['options'])
+    #check if the train is there and allow player to move west
+    if location_number <= 2:
+        check_train_present()
+        location_choice()
     else:
-        Player.waiting(player_name)
-        ticket_booth()
+        location_choice()
+
+def start_platform():
+    global player_name
+    global game_time
+    global train_present
+    global location_number
+    global current_location
+    #every time you change location, the current_location is set to the appropriate number
+    location_number = 0
+    location_starter()
+    
+def ticket_booth():
+    global player_name
+    global game_time
+    global train_present
+    global location_number
+    global current_location
+    location_number = 1
+    location_starter()
 
 def bench():
+    global player_name
     global game_time
     global train_present
-    game_time += 1
-    time_limit()
-    print('Turn',game_time)
-    print(locations[2]['description'])
-    Location.check_train_present(bench)
-    print(locations[2]['options'])
-    choice = input('What do you want to do?  ')
-    if choice == 'sit':
-        Player.waiting(player_name)
-        bench()
-    elif choice == 'north':
-        start_platform()
-    elif choice == 'west' and train_present:
-        train_car3()
-    elif choice == 'bag':
-        Player.check_inventory(player_inventory)
-        time.sleep(1)
-        #checking your bag shouldn't progress game_time
-        game_time -= 1
-        ticket_booth()
-    else:
-        Player.waiting(player_name)
-        ticket_booth()
-
-def train_car5():
-    global game_time
-    global train_present
-    game_time += 1
-    time_limit()
-    print('Turn',game_time)
-    print(locations[7]['description'])
-    print(locations[7]['options'])
-    choice = input('What do you want to do?  ')
-    if choice == 'fight':
-        if "Sword" in player_inventory:
-            print('You slice the monster in half and become a hero.')
-            print('What a great story to tell coworkers.')
-            print('Y O U  W I N ! ! !')
-        else: 
-            print('You try to punch the monster...')
-            print('The monster is unaffected and claws you to death.')
-            game_over()
-    elif choice == 'north':
-        train_car4()
-    elif choice == 'west' and train_present:
-        win_platform()
-    elif choice == 'bag':
-        Player.check_inventory(player_inventory)
-        time.sleep(1)
-        #checking your bag shouldn't progress game_time
-        game_time -= 1
-        train_car5()
-    else:
-        Player.waiting(player_name)
-        train_car5()
+    global location_number
+    global current_location
+    location_number = 2
+    location_starter()
 
 def train_car1():
+    global player_name
     global game_time
     global train_present
-    game_time += 1
-    time_limit()
-    print('Turn',game_time)
-    print(locations[3]['description'])
-    print(locations[3]['options'])
-    choice = input('What do you want to do?  ')
-    if choice == 'sword':
-        if "Sword" in player_inventory:
-            print('You already have the sword')
-            time.sleep(1)
-            game_time -= 1
-            train_car1()
-        else: 
-            player_name.pickup_sword()
-            train_car1()
-    elif choice == 'south':
-        train_car2()
-    elif choice == 'west' and train_present:
-        win_platform()
-    elif choice == 'bag':
-        Player.check_inventory(player_inventory)
-        time.sleep(1)
-        #checking your bag shouldn't progress game_time
-        game_time -= 1
-        train_car1()
-    else:
-        Player.waiting(player_name)
-        train_car1()
+    global location_number
+    global current_location
+    location_number = 3
+    location_starter()
 
-#moved outside of Player class. consider using a "factory function" via staticmethod in Player class in the future
+def train_car2():
+    global player_name
+    global game_time
+    global train_present
+    global location_number
+    global current_location
+    location_number = 4
+    location_starter()
+
+def train_car3():
+    global player_name
+    global game_time
+    global train_present
+    global location_number
+    global current_location
+    location_number = 5
+    location_starter()
+
+def train_car4():
+    global player_name
+    global game_time
+    global train_present
+    global location_number
+    global current_location
+    location_number = 6
+    location_starter()
+
+def train_car5():
+    global player_name
+    global game_time
+    global train_present
+    global location_number
+    global current_location
+    location_number = 7
+    location_starter()
+
+def lose_platform():
+    global player_name
+    global game_time
+    global train_present
+    global location_number
+    global current_location
+    location_number = 8
+    location_starter()
+
+def win_platform():
+    global player_name
+    global game_time
+    global train_present
+    global location_number
+    global current_location
+    location_number = 9
+    location_starter()
+
+
+#LOCATION FUNCTIONS END
+
+
 def intro():
     print('--- Intro ---')
     print('Welcome to your daily commute.')
-    print('To win the game, become a hero and get to work safely.')
+    print('To win the game, become a hero, feel fulfilled and maybe get to work safely.')
     time.sleep(1)
     return input('What is your name?')
 
+def debug():
+    global player_name
+    global game_time
+    global train_present
+    global location_number
+    global current_location
+    print(current_location)
+    current_location()
 
 
-#testing using a function as a dict value and invoking it via input
-def test():
-    print('testing')
+#List of choices in a dict
 
 choices = [
 {
@@ -369,64 +385,106 @@ choices = [
 'name' : start_platform,
 'north' : ticket_booth,
 'south' : bench,
-'west' : train_check_and_move
+'west' : train_check_and_move,
+'wait' : waiting,
+'bag' : check_bag,
+'where' : debug,
 },
 {
 #Location 1
 'name' : ticket_booth,
 'buy' : buy_ticket,
 'south' : start_platform,
-'west' : train_check_and_move
+'west' : train_check_and_move,
+'wait' : waiting,
+'bag' : check_bag,
+'where' : debug,
 },
 {
 #Location 2
 'name' : bench,
 'north' : start_platform,
-'west' : train_check_and_move
+'west' : train_check_and_move,
+'sit' : waiting,
+'bag' : check_bag,
+'where' : debug,
 },
 {
 #Location 3
 'name' : train_car1,
 'sword' : pickup_sword,
-
+'south' : train_car2,
+'wait' : waiting,
+'bag' : check_bag,
+'where' : debug,
+},
+{
+#Location 4
+'name' : train_car2,
+'north' : train_car1,
+'south' : train_car3,
+'wait' : waiting,
+'bag' : check_bag,
+'where' : debug,
+},
+{
+#Location 5
+'name' : train_car3,
+'north' : train_car2,
+'south' : train_car4,
+'wait' : waiting,
+'bag' : check_bag,
+'where' : debug,
+},
+{
+#Location 6
+'name' : train_car4,
+'north' : train_car3,
+'south' : train_car5,
+'wait' : waiting,
+'bag' : check_bag,
+},
+{
+#Location 7
+'name' : train_car5,
+'fight' : fight,
+'north' : train_car4,
+'wait' : waiting,
+'bag' : check_bag,
+'where' : debug,
+},
+{
+#Location 8
+'name' : lose_platform,
+'work' : game_over,
+'wait' : waiting,
+'bag' : check_bag,
+'where' : debug,
+},
+{
+#Location 9
+'name' : win_platform,
+'work' : game_over,
+'enjoy' : win,
+'wait' : waiting,
+'bag' : check_bag,
+'where' : debug,
 },
 ]
 
-print(location_number)
 
 
-
-location_number = 3
 current_location = choices[location_number]['name']
-current_location()
 
+def main():
+    #returns the name of the player
+    player_name = intro()
+    #creates the player_name object using Player class
+    player_name = Player(player_name)
+    start_platform()
 
-# choice = input('type north')
-# if choice in choices[0]:
-#     choice_function = choices[0][choice]
-#     choice_function()
-# else:
-#     print('test')
-
-
-
-
-#returns the name of the player
-# player_name = intro()
-# #creates the player_name object using Player class
-# player_name = Player(player_name)
-
-
-
-
-# def main():
-#     intro()
-#     start_platform()
-
-# if __name__ == "__main__":
-#     main()
-
-
+if __name__ == "__main__":
+    main()
 
 
 
