@@ -2,6 +2,5 @@
 2. Enter the train
 3. Head north to train car 1
 4. Pick up the sword
-5. Head south to train car 5
-6. Exit the train west
-7. Choose to enjoy life
+5. Head south to train car 5 & fight
+6. Choose to enjoy life
